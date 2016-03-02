@@ -1,9 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
-
-
+from django.contrib.auth.models import User
 
 
 class Aufgabensammlung(models.Model):
@@ -28,12 +26,29 @@ class Simpleaufgabe(models.Model):
 	sammlung = models.ForeignKey(Aufgabensammlung, on_delete=models.CASCADE, default=1)
 
 	richtige_loesung = models.CharField('Richtige Loesung', max_length=20)
-	gegebene_antwort_text = models.CharField('Vom Schueler gegebene Antwort', max_length=600,default="",blank=True)
 	# Um wieviel Prozent die gegebne loesung von der richtigen abweichen kann
 	# um trotzdem als richtig angezeigt zu werden
 	abweichungsprozent = models.IntegerField('Maximale prozentuale Abweichung von der gebenen Loesung', default=0)
 	
 	def __str__(self):
 		return 'Simpleaufgabe: '+self.frage_text
+
+
+
+class Antwort(models.Model):
+	"""Eine von einem Schueler gegebene Antwort
+	auf eine Frage"""
+	antwort_text = models.CharField('Antworttext', max_length=600, default="")
+	aufgabe = models.ForeignKey(Simpleaufgabe, on_delete=models.CASCADE)
+
+
+
+class ErweiterterNutzer(models.Model):
+	"""Ein Schueler oder Lehrer"""
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	schule = models.CharField(max_length=60)
+	lehrer = models.BooleanField(default=False)
+
+	
 
 
